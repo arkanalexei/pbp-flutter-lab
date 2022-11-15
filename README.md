@@ -102,3 +102,301 @@ floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             ),
 ```
 
+# Jelaskan perbedaan Navigator.push dan Navigator.pushReplacement
+Pertama perlu dipahami bahwa navigator di Flutter itu mirip dengan struktur data stack. Sehingga, sesuai namanya, push akan melakukan "push" rute yang dipush tersebut. Sedangkan, pushReplacement akan mengganti route navigator dengan melakukan "push" rute baru lalu membuang rute yang sebelumnya setelah rute baru tersebut selesai loading.
+
+# Sebutkan widget apa saja yang kamu pakai di proyek kali ini dan jelaskan fungsinya
+Selain yang sudah dituliskan pada pertanyaan diatas, kini saya menggunakan widget-widget baru seperti
+
+ListView. Berfungsi untuk menampilkan children scara scrolling.
+ListTile. Berfungsi untuk menampilkan detail dari sebuah children dari ListView. Di app saya digunakan untuk menampilkan data budget serta untuk navigasi ke page lain.
+Drawer. Berfungsi sebagai menu untuk navigasi antara page yang ada.
+SizedBox. Sebuah box dengan ukuran tertentu. Berfungsi untuk memberikan jarak antara widget-widget di app saya.
+
+# Sebutkan jenis-jenis event yang ada pada Flutter (contoh: onPressed)
+onPressed. Kode dalam event onPressed akan tereksekusi ketika sebuah tombol di klik. 
+onHover. Kode dalam event ini akan tereksekusi ketika pointer bergerak dalam sebuah tombol (tapi tidak di klik)
+onFocusChange. Kode dalam event ini akan tereksekusi ketika fokus berubah.
+onChanged. Kode dalam event ini akan tereksekusi dalam TextField ketika user melakukan insert atau delete sebuah text.
+onTap. Sebenarnya mirip dengan onPressed. Namun onPressed cenderung hanya untuk button sedangkan onTap untuk gestur apapun.
+onSaved. Kode dalam event ini akan tereksekusi ketika nilai final dari form disimpan melalui FormState.save.
+
+# Jelaskan bagaimana cara kerja Navigator dalam "mengganti" halaman dari aplikasi Flutter
+Halaman-halaman lain dalam Flutter itu dinamakan "rute". Seperti dikatakan sebelumnya, navigator pada Flutter itu serupa dengan implementasi Stack. Hal ini berguna jika misalnya dari sebuah halaman tertentu, kita bisa kembali ke halaman sebelumnya dengan menggunakan tombol back. Sebagai contoh, misal ada dua halaman yakni A dan B. Default kita sudah di halaman A maka A sudah di dalam stack. Dari A, kita navigasi ke B dengan memencet sebuah tombol. Hal tersebut akan melakukan "push" untuk halaman B ke dalam stack. Sehingga stack kita sekarang A-B dengan B yang ditampilkan. Ketika ingin back ke halaman A, sama saja seperti kita melakukan "pop" dari stack tersebut.
+
+# Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas
+## Menambahkan drawer/hamburger menu pada app yang telah dibuat sebelumnya
+Dengan potongan kode ini, lalu tinggal tambah navigasi untuk setiap halaman/rute.
+```dart
+Drawer(
+  child: Column(
+    children: [
+      // Menambahkan clickable menu
+    ],
+  ),
+),
+```
+
+## Menambahkan tiga tombol navigasi pada drawer/hamburger.
+### Navigasi pertama untuk ke halaman counter.
+```dart
+ListTile(
+  title: const Text('counter_7'),
+  onTap: () {
+    // Route menu ke halaman utama
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MyHomePage(
+                data: widget.data,
+                tambahData: widget.tambahData,
+              )),
+    );
+  },
+),
+```
+### Navigasi kedua untuk ke halaman form.
+```dart
+ListTile(
+  title: const Text('Tambah Budget'),
+  onTap: () {
+    // Route menu ke halaman form
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MyFormPage(
+                data: widget.data,
+                tambahData: widget.tambahData,
+              )),
+    );
+  },
+),
+```
+
+### Navigasi ketiga untuk ke halaman yang menampilkan data budget yang telah di-input melalui form.
+```dart
+ListTile(
+  title: const Text('Data Budget'),
+  onTap: () {
+    // Route menu ke halaman form
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MyDataPage(
+                data: widget.data,
+                tambahData: widget.tambahData,
+              )),
+    );
+  },
+),
+```
+
+## Menambahkan halaman form
+### Menambahkan elemen input dengan tipe data String berupa judul budget.
+```dart
+TextFormField(
+  decoration: InputDecoration(
+    hintText: "Judul",
+    labelText: "Judul",
+    // Menambahkan icon agar lebih intuitif
+    icon: const Icon(Icons.title),
+    // Menambahkan circular border agar lebih rapi
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(5.0),
+    ),
+  ),
+  // Menambahkan behavior saat nama diketik
+  onChanged: (String? value) {
+    setState(() {
+      _judul = value!;
+    });
+  },
+  // Menambahkan behavior saat data disimpan
+  onSaved: (String? value) {
+    setState(() {
+      _judul = value!;
+    });
+  },
+  // Validator sebagai validasi form
+  validator: (String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Judul tidak boleh kosong!';
+    }
+    return null;
+  },
+),
+```
+### Menambahkan elemen input dengan tipe data int berupa nominal budget.
+```dart
+TextFormField(
+  keyboardType: TextInputType.number,
+  inputFormatters: <TextInputFormatter>[
+    FilteringTextInputFormatter.digitsOnly
+  ],
+  decoration: InputDecoration(
+    hintText: "Nominal",
+    labelText: "Nominal",
+    // Menambahkan icon agar lebih intuitif
+    icon: const Icon(Icons.numbers),
+    // Menambahkan circular border agar lebih rapi
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(5.0),
+    ),
+  ),
+  // Menambahkan behavior saat nama diketik
+  onChanged: (String? value) {
+    // String _nominal = _nominalController.text;
+    // int.parse(_nominal);
+    setState(() {
+      _nominal = value!;
+    });
+  },
+  // Menambahkan behavior saat data disimpan
+  onSaved: (String? value) {
+    // String _nominal = _nominalController.text;
+    // int.parse(_nominal);
+    setState(() {
+      _nominal = value!;
+    });
+  },
+  // Validator sebagai validasi form
+  validator: (String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Nominal tidak boleh kosong!';
+    }
+    return null;
+  },
+),
+```
+### Menambahkan elemen dropdown yang berisi tipe budget dengan pilihan pemasukan dan pengeluaran.
+```dart
+ListTile(
+  leading: const Icon(Icons.class_),
+  title: const Text(
+    'Pilih Jenis',
+  ),
+  trailing: DropdownButton(
+    value: tipeBudget,
+    icon: const Icon(Icons.keyboard_arrow_down),
+    items: listTipeBudget.map((String items) {
+      return DropdownMenuItem(
+        value: items,
+        child: Text(items),
+      );
+    }).toList(),
+    onChanged: (String? newValue) {
+      setState(() {
+        tipeBudget = newValue!;
+      });
+    },
+  ),
+),
+```
+
+### Menambahkan button untuk menyimpan budget.
+```dart
+TextButton(
+  child: const Text(
+    "Simpan",
+    style: TextStyle(color: Colors.white),
+  ),
+  style: ButtonStyle(
+    backgroundColor:
+        MaterialStateProperty.all(Colors.blue),
+  ),
+  onPressed: () {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      var intNominal = int.parse(_nominal);
+      widget.tambahData(
+        dataBudget(
+            _judul, intNominal, tipeBudget, tanggal),
+      );
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            elevation: 15,
+            child: Container(
+              child: ListView(
+                padding: const EdgeInsets.only(
+                    top: 20, bottom: 20),
+                shrinkWrap: true,
+                children: <Widget>[
+                  Center(
+                      child:
+                          const Text('Informasi Data')),
+                  SizedBox(height: 20),
+                  // TODO: Munculkan informasi yang didapat dari form
+                  Text('Judul: $_judul'),
+                  Text('Nominal: $_nominal'),
+                  Text('Tipe: $tipeBudget'),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('Kembali'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+  },
+),
+```
+## Menambahkan halaman data budget
+```dart
+import 'package:flutter/material.dart';
+import 'package:counter_7/main.dart';
+import 'package:counter_7/drawer.dart';
+
+class MyDataPage extends StatefulWidget {
+  const MyDataPage({super.key, required this.data, required this.tambahData});
+  final List<dataBudget> data;
+  final Function(dataBudget) tambahData;
+
+  @override
+  State<MyDataPage> createState() => _MyDataPageState();
+}
+
+class _MyDataPageState extends State<MyDataPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Form'),
+      ),
+
+      // Menambahkan drawer menu
+      drawer: PublicDrawer(
+        data: widget.data,
+        tambahData: widget.tambahData,
+      ),
+
+      body: ListView.builder(
+          itemCount: widget.data.length,
+          itemBuilder: (BuildContext context, int index) {
+            var budgetTitle = widget.data[index].judul;
+            var date = widget.data[index].tanggal;
+            return ListTile(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(1),
+                  side: const BorderSide(color: Colors.black, width: 0.3),
+                ),
+                trailing: Text(widget.data[index].jenisBudget),
+                subtitle: Text(widget.data[index].nominal.toString()),
+                
+                title: Text('$budgetTitle - $date'));
+                // title: Text('f');
+          }),
+    );
+  }
+}
+```

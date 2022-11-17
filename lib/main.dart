@@ -21,7 +21,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   // This widget is the root of your application.
 
   final List<dataBudget> data = <dataBudget>[];
@@ -31,7 +30,6 @@ class _MyAppState extends State<MyApp> {
       data.add(budget);
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -101,19 +99,18 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
 
-    if (_counter == 1) {
-      _counter--;
-      _isVisible = false;
-    } else if (_counter > 1) {
-      _counter--;
-    } else {
-      _counter = _counter;
-    }
+      if (_counter == 1) {
+        _counter--;
+        _isVisible = false;
+      } else if (_counter > 1) {
+        _counter--;
+      } else {
+        _counter = _counter;
+      }
     });
   }
 
   Widget getText() {
-
     const ganjil = Text('GANJIL', style: TextStyle(color: Colors.blue));
     const genap = Text('GENAP', style: TextStyle(color: Colors.red));
 
@@ -123,7 +120,6 @@ class _MyHomePageState extends State<MyHomePage> {
       return ganjil;
     }
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        
+
         child: Column(
           // Column is also a layout widget. It takes a list of children and
           // arranges them vertically. By default, it sizes itself to fit its
@@ -164,11 +160,10 @@ class _MyHomePageState extends State<MyHomePage> {
           // center the children vertically; the main axis here is the vertical
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
-          
+
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             getText(),
-
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
@@ -186,9 +181,8 @@ class _MyHomePageState extends State<MyHomePage> {
             Visibility(
               visible: _isVisible,
               child: FloatingActionButton(
-                onPressed: _decrementCounter,
-                child: const Icon(Icons.remove)
-              ),
+                  onPressed: _decrementCounter,
+                  child: const Icon(Icons.remove)),
             ),
             FloatingActionButton(
               onPressed: _incrementCounter,

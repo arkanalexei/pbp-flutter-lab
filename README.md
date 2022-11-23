@@ -402,15 +402,16 @@ class _MyDataPageState extends State<MyDataPage> {
 ```
 
 ## Apakah bisa kita melakukan pengambilan data JSON tanpa membuat model terlebih dahulu? Jika iya, apakah hal tersebut lebih baik daripada membuat model sebelum melakukan pengambilan data JSON?
+Tentu bisa saja tapi tidak saya rekomendasi karena model itu akan memudahkan pekerjaan kita nanti. Selain dari struktur yang lebih rapih, menggunakan model juga akan memastikan tipe data setiap field model kita sesuai. 
 
 ## Sebutkan widget apa saja yang kamu pakai di proyek kali ini dan jelaskan fungsinya.
-SafeArea.
-Checkbox.
-Row.
+SafeArea. Berguna untuk memberi padding yang cukup pada childnya untuk mencegah gangguan dari operating system.
+Checkbox. Input form dalam bentuk centang kotak. Bernilai True jika dicentang, dan False jika tidak. Di konteks tugas ini berguna untuk menentukan apabila sebuah film punya status "watched" atau not watched"
+Row. Menampilkan children dalam array secara horizontal
 
 Selain itu semua widget sudah dijelaskan di tugas-tugas sebelumnya :D
 ## Jelaskan mekanisme pengambilan data dari json hingga dapat ditampilkan pada Flutter.
-
+Pertama data json didapatkan dengan melakukan fetch pada method yang ada di file fetchMyWatchlist.dart. Setelah itu, data yang telah di fetch akan di convert berdasarkan kode yang ada di model/mywatchlist.dart.
 
 ## Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas.
 ### Menambahkan tombol navigasi pada drawer/hamburger untuk ke halaman mywatchlist.

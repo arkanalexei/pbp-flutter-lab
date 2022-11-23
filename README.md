@@ -400,3 +400,185 @@ class _MyDataPageState extends State<MyDataPage> {
   }
 }
 ```
+
+## Apakah bisa kita melakukan pengambilan data JSON tanpa membuat model terlebih dahulu? Jika iya, apakah hal tersebut lebih baik daripada membuat model sebelum melakukan pengambilan data JSON?
+
+## Sebutkan widget apa saja yang kamu pakai di proyek kali ini dan jelaskan fungsinya.
+SafeArea.
+Checkbox.
+Row.
+
+Selain itu semua widget sudah dijelaskan di tugas-tugas sebelumnya :D
+## Jelaskan mekanisme pengambilan data dari json hingga dapat ditampilkan pada Flutter.
+
+
+## Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas.
+### Menambahkan tombol navigasi pada drawer/hamburger untuk ke halaman mywatchlist.
+```dart
+ListTile(
+  title: const Text('My Watch List'),
+  onTap: () {
+    // Route menu ke halaman form
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MyWatchlistPage(
+                data: widget.data,
+                tambahData: widget.tambahData,
+              )),
+    );
+  },
+),
+```
+### Membuat satu file dart yang berisi model mywatchlist.
+Create new file "mywatchlist.dart"
+### Menambahkan halaman mywatchlist yang berisi semua watch list yang ada pada endpoint JSON di Django yang telah kamu deploy ke Heroku sebelumnya (Tugas 3).
+Endpoint JSON dari https://tugas-2-pbp-arkan.herokuapp.com/mywatchlist/json/
+Implementasi nya itu seluruh file mywatchlist.dart
+
+### Membuat navigasi dari setiap judul watch list ke halaman detail
+```dart
+onTap: () {
+  Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => MoviePage(
+            data: widget.data,
+            tambahData: widget.tambahData,
+            watched:
+                snapshot.data![index].fields.watched,
+            title: snapshot.data![index].fields.title,
+            rating:
+                snapshot.data![index].fields.rating,
+            releaseDate: snapshot
+                .data![index].fields.releaseDate,
+            review:
+                snapshot.data![index].fields.review,
+          )));
+},
+```
+### Menambahkan halaman detail untuk setiap mywatchlist yang ada pada daftar tersebut. Halaman ini menampilkan judul, release date, rating, review, dan status (sudah ditonton/belum).
+```dart
+import 'package:flutter/material.dart';
+import 'package:counter_7/main.dart';
+import 'package:counter_7/drawer.dart';
+
+class MoviePage extends StatelessWidget {
+  const MoviePage(
+      {super.key,
+      required this.data,
+      required this.tambahData,
+      required this.watched,
+      required this.title,
+      required this.rating,
+      required this.releaseDate,
+      required this.review});
+
+  final List<dataBudget> data;
+  final Function(dataBudget) tambahData;
+  final bool watched;
+  final String title;
+  final int rating;
+  final DateTime releaseDate;
+  final String review;
+
+  @override
+  Widget build(BuildContext context) {
+    var date = releaseDate.toString().substring(0, 10);
+    var ratingStr = rating.toString();
+    var watchedStr;
+    if (watched) {
+      watchedStr = 'watched';
+    } else {
+      watchedStr = 'not watched';
+    }
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Detail'),
+        ),
+
+        // Menambahkan drawer menu
+        drawer: PublicDrawer(
+          data: data,
+          tambahData: tambahData,
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20.0),
+            Container(
+                child: Align(
+              alignment: Alignment.center,
+              child: Text(title,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 34)),
+            )),
+            const SizedBox(height: 20.0),
+            Row(children: [
+              Text(
+                'Release Date: ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(date),
+            ]),
+            const SizedBox(height: 20.0),
+            Row(children: [
+              Text(
+                'Rating: ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text('$rating/5'),
+            ]),
+            const SizedBox(height: 20.0),
+            Row(children: [
+              Text(
+                'Release Date: ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(watchedStr),
+            ]),
+            const SizedBox(height: 20.0),
+            Text('Review:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(review),
+            Spacer(),
+            Container(
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: TextButton(
+                      onPressed: (() {
+                        Navigator.pop(context);
+                      }),
+                      child: Text(
+                        'Back',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.blue)),
+                    ))),
+          ],
+        ));
+  }
+}
+
+```
+
+### Menambahkan tombol untuk kembali ke daftar mywatchlist
+```dart
+Container(
+  margin:
+      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+  child: Align(
+      alignment: Alignment.bottomCenter,
+      child: TextButton(
+        onPressed: (() {
+          Navigator.pop(context);
+        }),
+        child: Text(
+          'Back',
+          style: TextStyle(color: Colors.white),
+        ),
+        style: ButtonStyle(
+            backgroundColor:
+                MaterialStateProperty.all(Colors.blue)),
+      ))),
+```

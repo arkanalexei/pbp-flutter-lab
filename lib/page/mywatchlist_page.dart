@@ -1,10 +1,8 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:counter_7/model/mywatchlist.dart';
 import 'package:flutter/material.dart';
 import 'package:counter_7/main.dart';
 import 'package:counter_7/drawer.dart';
 import 'package:counter_7/page/movie.dart';
+import 'package:counter_7/fetchMyWatchlist.dart';
 
 class MyWatchlistPage extends StatefulWidget {
   const MyWatchlistPage(
@@ -18,32 +16,13 @@ class MyWatchlistPage extends StatefulWidget {
 }
 
 class _MyWatchlistPageState extends State<MyWatchlistPage> {
-  Future<List<MyWatchlist>> fetchMyWatchlist() async {
-    var url =
-        Uri.parse('https://tugas-2-pbp-arkan.herokuapp.com/mywatchlist/json/');
-    var response = await http.get(
-      url,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json",
-      },
-    );
-
-    // melakukan decode response menjadi bentuk json
-    var data = jsonDecode(utf8.decode(response.bodyBytes));
-
-    // melakukan konversi data json menjadi object MyWatchlist
-    List<MyWatchlist> listMyWatchlist = [];
-    for (var d in data) {
-      if (d != null) {
-        listMyWatchlist.add(MyWatchlist.fromJson(d));
-      }
-    }
-
-    return listMyWatchlist;
+  late final Future finalFuture;
+  @override
+  void initState() {
+    super.initState();
+    finalFuture = fetchMyWatchlist();
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -56,7 +35,7 @@ class _MyWatchlistPageState extends State<MyWatchlistPage> {
           tambahData: widget.tambahData,
         ),
         body: FutureBuilder(
-            future: fetchMyWatchlist(),
+            future: finalFuture,
             builder: (context, AsyncSnapshot snapshot) {
               if (snapshot.data == null) {
                 return const Center(child: CircularProgressIndicator());
@@ -77,24 +56,31 @@ class _MyWatchlistPageState extends State<MyWatchlistPage> {
                       itemCount: snapshot.data!.length,
                       itemBuilder: (_, index) => GestureDetector(
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => MoviePage(
-                                data: widget.data,
-                                tambahData: widget.tambahData,
-                                watched: snapshot.data![index].fields.watched,
-                                title: snapshot.data![index].fields.title,
-                                rating: snapshot.data![index].fields.rating,
-                                releaseDate: snapshot.data![index].fields.releaseDate,
-                                review: snapshot.data![index].fields.review,
-
-                              ))
-                            );
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => MoviePage(
+                                      data: widget.data,
+                                      tambahData: widget.tambahData,
+                                      watched:
+                                          snapshot.data![index].fields.watched,
+                                      title: snapshot.data![index].fields.title,
+                                      rating:
+                                          snapshot.data![index].fields.rating,
+                                      releaseDate: snapshot
+                                          .data![index].fields.releaseDate,
+                                      review:
+                                          snapshot.data![index].fields.review,
+                                    )));
                           },
                           child: Container(
                             margin: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 12),
                             padding: const EdgeInsets.all(20.0),
                             decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: snapshot.data![index].fields.watched
+                                        ? Colors.green
+                                        : Colors.red,
+                                    width: 2.5),
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(15.0),
                                 boxShadow: const [
@@ -105,13 +91,34 @@ class _MyWatchlistPageState extends State<MyWatchlistPage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "${snapshot.data![index].fields.title}",
-                                  style: const TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "${snapshot.data![index].fields.title}",
+                                      style: const TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 100,
+                                      child: CheckboxListTile(
+                                          value: snapshot
+                                              .data![index].fields.watched,
+                                          onChanged: (newVal) {
+                                            setState(() {
+                                              snapshot.data![index].fields
+                                                      .watched =
+                                                  !snapshot.data![index].fields
+                                                      .watched;
+                                              // watched = !watched;
+                                            });
+                                          }),
+                                    )
+                                  ],
+                                )
                               ],
                             ),
                           )));

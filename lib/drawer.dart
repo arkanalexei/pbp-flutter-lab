@@ -21,7 +21,8 @@ class _PublicDrawerState extends State<PublicDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SafeArea(
+        child: Container(
       child: Drawer(
         child: Column(
           children: [
@@ -85,6 +86,6 @@ class _PublicDrawerState extends State<PublicDrawer> {
           ],
         ),
       ),
-    );
+    ));
   }
 }
